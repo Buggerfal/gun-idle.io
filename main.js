@@ -781,7 +781,7 @@ function (_Resizable) {
         y: height / 2,
         style: {
           fill: "white",
-          fontFamily: "Comic Sans MS",
+          // fontFamily: "Comic Sans MS",
           fontSize: 110
         }
       });
@@ -1088,7 +1088,7 @@ function () {
         text: text,
         style: {
           fill: "white",
-          fontFamily: "Comic Sans MS",
+          // fontFamily: "Comic Sans MS",
           fontSize: fontSize
         }
       });
@@ -1260,10 +1260,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _settings_appSettings__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(62);
 /* harmony import */ var component_emitter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(66);
 /* harmony import */ var component_emitter__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(component_emitter__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var pixi_particles__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(76);
-/* harmony import */ var _components_ScoreBar__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(68);
-/* harmony import */ var _settings_i18n__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(71);
-/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8);
+/* harmony import */ var _components_ScoreBar__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(68);
+/* harmony import */ var _settings_i18n__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(71);
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -1273,8 +1271,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-
 
 
 
@@ -1293,7 +1289,7 @@ function () {
     this._substrate = null;
     this._hintTween = null;
     new component_emitter__WEBPACK_IMPORTED_MODULE_3___default.a(this);
-    this.init(); // this._particles(); //TODO:
+    this.init();
   }
 
   _createClass(IntroScene, [{
@@ -1307,7 +1303,7 @@ function () {
 
       var textStyles = {
         fill: "white",
-        fontFamily: "Courier New",
+        // fontFamily: "Courier New",
         fontSize: 200,
         fontWeight: 900
       };
@@ -1325,7 +1321,7 @@ function () {
         onClick: function onClick(e) {
           _this.hide();
 
-          _components_ScoreBar__WEBPACK_IMPORTED_MODULE_5__["default"].show();
+          _components_ScoreBar__WEBPACK_IMPORTED_MODULE_4__["default"].show();
           e.stopPropagation();
 
           _this._container.removeChild(_this._blockedInteractionGraphics);
@@ -1344,7 +1340,7 @@ function () {
         onClick: function onClick(e) {
           _this.hide();
 
-          _components_ScoreBar__WEBPACK_IMPORTED_MODULE_5__["default"].show();
+          _components_ScoreBar__WEBPACK_IMPORTED_MODULE_4__["default"].show();
           _this._blockedInteractionGraphics.visible = false;
           e.stopPropagation();
         }
@@ -1356,13 +1352,13 @@ function () {
       _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
         x: width / 2,
         y: height / 2,
-        text: _settings_i18n__WEBPACK_IMPORTED_MODULE_6__["default"].introScene_1,
+        text: _settings_i18n__WEBPACK_IMPORTED_MODULE_5__["default"].introScene_1,
         style: textStyles
       }).setParent(this._container);
       _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
         x: width / 2,
         y: height / 2 + 220,
-        text: _settings_i18n__WEBPACK_IMPORTED_MODULE_6__["default"].introScene_2,
+        text: _settings_i18n__WEBPACK_IMPORTED_MODULE_5__["default"].introScene_2,
         style: textStyles
       }).setParent(this._container);
       this.hide();
@@ -1378,106 +1374,6 @@ function () {
     value: function hide() {
       this._container.alpha = 0;
       this._substrate.interactive = false;
-    }
-  }, {
-    key: "_particles",
-    value: function _particles() {
-      var _this2 = this;
-
-      var container = new pixi_js__WEBPACK_IMPORTED_MODULE_7__["ParticleContainer"]();
-      container.x = 500;
-      container.y = 500;
-      _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.stage.addChild(container); // Circle
-
-      var graphics = new pixi_js__WEBPACK_IMPORTED_MODULE_7__["Graphics"]();
-      graphics.lineStyle(0); // draw a circle, set the lineStyle to zero so the circle doesn't have an outline
-
-      graphics.beginFill(0xde3249, 1);
-      graphics.drawCircle(100, 250, 50);
-      graphics.endFill(); // this._container.addChild(graphics);
-
-      var graphics2 = new pixi_js__WEBPACK_IMPORTED_MODULE_7__["Graphics"]();
-      graphics2.lineStyle(0); // draw a circle, set the lineStyle to zero so the circle doesn't have an outline
-
-      graphics2.beginFill(0xde3249, 1);
-      graphics2.drawCircle(100, 350, 25);
-      graphics2.endFill(); // this._container.addChild(graphics2);
-      // for (let i = 0; i < 10; ++i) {
-      //     let sprite = GraphicsHelper.createSpriteFromAtlas({
-      //         name: `slide1911`,
-      //     });
-      //     container.addChild(sprite);
-      // }
-
-      var texture = _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.renderer.generateTexture(graphics);
-      var texture3 = _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.renderer.generateTexture(graphics2);
-      this._ticker = new pixi_js__WEBPACK_IMPORTED_MODULE_7__["Ticker"]();
-
-      this._ticker.start();
-
-      this._ticker.add(function () {
-        _this2._tick(_this2._ticker.deltaMS);
-      });
-
-      this.emitter = new pixi_particles__WEBPACK_IMPORTED_MODULE_4__["Emitter"](container, [texture, texture3], {
-        alpha: {
-          start: 0,
-          end: 1
-        },
-        scale: {
-          start: 0.3,
-          end: 1.2,
-          minimumScaleMultiplier: 1
-        },
-        color: {
-          start: "#6bff61",
-          end: "#d8ff4a"
-        },
-        speed: {
-          start: 50,
-          end: 50,
-          minimumSpeedMultiplier: 1
-        },
-        acceleration: {
-          x: 0,
-          y: 0
-        },
-        maxSpeed: 0,
-        startRotation: {
-          min: 0,
-          max: 360
-        },
-        noRotation: true,
-        rotationSpeed: {
-          min: 0,
-          max: 0
-        },
-        lifetime: {
-          min: 2,
-          max: 1.8
-        },
-        blendMode: "screen",
-        frequency: 0.01,
-        emitterLifetime: -1,
-        maxParticles: 10,
-        pos: {
-          x: 0.5,
-          y: 0.5
-        },
-        addAtBack: true,
-        spawnType: "line",
-        spawnCircle: {
-          x: 100,
-          y: 200,
-          r: 120
-        }
-      });
-      this.emitter.emit = true;
-    }
-  }, {
-    key: "_tick",
-    value: function _tick(delta) {
-      this.emitter.update(delta);
     }
   }]);
 
@@ -1567,7 +1463,7 @@ function () {
         text: _settings_i18n__WEBPACK_IMPORTED_MODULE_5__["default"].outroHeader,
         style: {
           fill: "white",
-          fontFamily: "Courier New",
+          // fontFamily: "Courier New",
           fontSize: 70,
           fontWeight: 900
         }
@@ -1606,7 +1502,7 @@ function () {
         text: _settings_i18n__WEBPACK_IMPORTED_MODULE_5__["default"].outroDescription,
         style: {
           fill: "white",
-          fontFamily: "Courier New",
+          // fontFamily: "Courier New",
           fontSize: 50,
           fontWeight: 900
         }
@@ -1776,7 +1672,11 @@ function () {
     value: function _runRageMode() {
       var _this3 = this;
 
-      //AUTOSHOT (RAGE-MODE) LOGIC
+      this._openStages.forEach(function (stage) {
+        stage.weapon.runRageModeAnimation();
+      }); //AUTOSHOT (RAGE-MODE) LOGIC
+
+
       var timeToOffRageMode = 5000;
       var timeBeetweenShot = 150;
       var ticker = new pixi_js__WEBPACK_IMPORTED_MODULE_4__["Ticker"]();
@@ -1807,6 +1707,10 @@ function () {
         alpha: [0.3, 0.1, 0.4, 0.1, 0.5, 0.2, 0.1, 0.4, 0]
       }, timeToOffRageMode).onComplete(function () {
         _engine_Starter__WEBPACK_IMPORTED_MODULE_7__["default"].app.stage.removeChild(stageModeBackground);
+
+        _this3._openStages.forEach(function (stage) {
+          stage.weapon.stopRageModeAnimation();
+        });
       }).start(); //FLAME ICON LOGIC
 
       var flameIcon = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_6__["default"].createSpriteFromAtlas({
@@ -1837,8 +1741,8 @@ function () {
     key: "_shakeBackground",
     value: function _shakeBackground() {
       new tween_js__WEBPACK_IMPORTED_MODULE_5___default.a.Tween(_engine_Starter__WEBPACK_IMPORTED_MODULE_7__["default"].app.stage).to({
-        x: [-5, 0, 5, -3, 0, 3, 0],
-        y: [0, 3, 0, -3, 0, -5, 0, 5, 0]
+        x: [-5, 0, 8, -9, 0, 6, 0, -8, 0, 7],
+        y: [0, 4, 0, 6, -7, 3, -5, 0, 6, 0, 9, 0]
       }, 480).repeat(10).start();
     }
   }, {
@@ -1938,7 +1842,7 @@ function () {
     this._mainContainer = null;
     this._lockContainer = null;
     this._unlockContainer = null;
-    this._weapon = null;
+    this.weapon = null;
     this._lock = null;
     this._ticker = null;
     this.level = this._config.info.level;
@@ -1988,23 +1892,22 @@ function () {
         _this.emit("startRageMode");
       });
       this._weaponName = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
-        x: 100,
+        x: 120,
         y: 50,
         text: "".concat(name),
         style: {
           fill: "white",
-          fontFamily: "Comic Sans MS",
+          // fontFamily: "Comic Sans MS",
           fontSize: 40
         }
       });
 
       this._weaponName.setParent(this._unlockContainer);
 
-      this._weapon = _weapons_WeaponFactory__WEBPACK_IMPORTED_MODULE_3__["default"].createWeapon(weaponType, {
+      this.weapon = _weapons_WeaponFactory__WEBPACK_IMPORTED_MODULE_3__["default"].createWeapon(weaponType, {
         y: y
       });
-
-      this._weapon.container.setParent(this._unlockContainer);
+      this.weapon.container.setParent(this._unlockContainer);
 
       this._initShotListener();
 
@@ -2032,7 +1935,7 @@ function () {
         text: "".concat(_settings_i18n__WEBPACK_IMPORTED_MODULE_12__["default"].level, " ").concat(level),
         style: {
           fill: "white",
-          fontFamily: "Comic Sans MS",
+          // fontFamily: "Comic Sans MS",
           fontSize: 40
         }
       });
@@ -2093,7 +1996,7 @@ function () {
     value: function _initShotListener() {
       var _this3 = this;
 
-      this._weapon.on("shotRequest", function () {
+      this.weapon.on("shotRequest", function () {
         _this3._makeShot();
       });
     }
@@ -2127,7 +2030,7 @@ function () {
 
         this._unlockContainer.addChild(hint.sprite);
 
-        this._weapon.once("shotIsDone", function () {
+        this.weapon.once("shotIsDone", function () {
           hint.hide();
 
           _this4._unlockContainer.removeChild(hint.sprite);
@@ -2143,13 +2046,11 @@ function () {
       var timeBetweenShoot = 1000;
       var autoShotsLeft = 5;
       var timeToNextShoot = timeBetweenShoot;
-
-      this._weapon.on("shotIsDone", function () {
+      this.weapon.on("shotIsDone", function () {
         autoShotsLeft -= 1;
         timeToNextShoot = timeBetweenShoot;
       });
-
-      this._weapon.once("shotIsDone", function () {
+      this.weapon.once("shotIsDone", function () {
         _this5._ticker = new pixi_js__WEBPACK_IMPORTED_MODULE_9__["Ticker"]();
 
         _this5._ticker.add(function () {
@@ -2180,8 +2081,7 @@ function () {
       var _this6 = this;
 
       var coordinates = this.targetsManager.getHolePosition();
-
-      this._weapon.once("shotIsDone", function () {
+      this.weapon.once("shotIsDone", function () {
         var shotReward = _this6._config.info.shotReward;
 
         _this6.targetsManager.makeHole(coordinates);
@@ -2190,8 +2090,7 @@ function () {
 
         _this6.emit("stageScoreUpdate");
       });
-
-      this._weapon.shot(coordinates);
+      this.weapon.shot(coordinates);
     }
   }, {
     key: "_drawRewardText",
@@ -2208,7 +2107,7 @@ function () {
         y: y,
         style: {
           fill: "white",
-          fontFamily: "Comic Sans MS",
+          // fontFamily: "Comic Sans MS",
           fontSize: 50
         }
       });
@@ -2221,8 +2120,7 @@ function () {
   }, {
     key: "hide",
     value: function hide() {
-      this._weapon.hide();
-
+      this.weapon.hide();
       this._lockContainer.alpha = 1;
       this._unlockContainer.alpha = 0;
     }
@@ -2230,8 +2128,7 @@ function () {
     key: "show",
     value: function show() {
       //this._openBtnContainer.visible = true;
-      this._weapon.show();
-
+      this.weapon.show();
       this._lockContainer.alpha = 0;
       this._unlockContainer.alpha = 1;
     }
@@ -2330,6 +2227,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _engine_TexturesLoader__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(63);
 /* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(82);
 /* harmony import */ var _settings_appSettings__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(62);
+/* harmony import */ var pixi_particles__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(76);
+/* harmony import */ var _settings_particles__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(88);
+/* harmony import */ var _engine_Starter__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(7);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
@@ -2360,25 +2260,20 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 
 
+
+
+
 var BaseWeapon =
 /*#__PURE__*/
 function () {
   function BaseWeapon(config) {
-    var _this = this;
-
     _classCallCheck(this, BaseWeapon);
 
     this.config = _objectSpread({}, config);
     this._container = null;
     this._weaponContainer = null;
-    this._ticker = new pixi_js__WEBPACK_IMPORTED_MODULE_2__["Ticker"]();
-
-    this._ticker.start();
-
-    this._ticker.add(function (delta) {
-      _this.tick(delta);
-    });
-
+    this._weaponAnimationTime = 80;
+    this._rageEmitters = [];
     new component_emitter__WEBPACK_IMPORTED_MODULE_3___default.a(this);
     this.init();
     this._isAnimationEnd = true;
@@ -2405,7 +2300,7 @@ function () {
   }, {
     key: "sleeveAnimation",
     value: function sleeveAnimation() {
-      var _this2 = this;
+      var _this = this;
 
       var sleeve = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_0__["default"].createSpriteFromAtlas({
         x: 190,
@@ -2420,7 +2315,7 @@ function () {
       }, 180).onUpdate(function (k) {
         sleeve.rotation = -k;
       }).onComplete(function () {
-        _this2._container.removeChild(sleeve);
+        _this._container.removeChild(sleeve);
 
         sleeve.destroy();
       }).start();
@@ -2444,8 +2339,48 @@ function () {
       animatedSprite.play();
     }
   }, {
-    key: "tick",
-    value: function tick() {}
+    key: "runRageModeAnimation",
+    value: function runRageModeAnimation() {
+      var _this2 = this;
+
+      var _loop = function _loop(i) {
+        var color = _utils_utils__WEBPACK_IMPORTED_MODULE_5__["default"].getRandomColor();
+        var container = new pixi_js__WEBPACK_IMPORTED_MODULE_2__["ParticleContainer"]();
+
+        _this2._container.addChild(container);
+
+        container.x = -100;
+        container.y = _this2._slideSprite.y + 170;
+        var graphics = new pixi_js__WEBPACK_IMPORTED_MODULE_2__["Graphics"]();
+        graphics.lineStyle(0);
+        graphics.beginFill(color, 1);
+        graphics.drawCircle(100, 250, 50);
+        graphics.endFill();
+        var texture = _engine_Starter__WEBPACK_IMPORTED_MODULE_9__["default"].app.renderer.generateTexture(graphics);
+        var emitter = new pixi_particles__WEBPACK_IMPORTED_MODULE_7__["Emitter"](container, [texture], _settings_particles__WEBPACK_IMPORTED_MODULE_8__["default"]);
+        var ticker = new pixi_js__WEBPACK_IMPORTED_MODULE_2__["Ticker"]();
+        ticker.start();
+        ticker.add(function () {
+          emitter.update(ticker.deltaMS * 0.003);
+        });
+        emitter.emit = true;
+
+        _this2._rageEmitters.push(emitter);
+      };
+
+      for (var i = 0; i < 4; i++) {
+        _loop(i);
+      }
+
+      this._weaponAnimationTime = 60;
+    }
+  }, {
+    key: "stopRageModeAnimation",
+    value: function stopRageModeAnimation() {
+      this._rageEmitters.forEach(function (emitter) {
+        emitter.emit = false;
+      });
+    }
   }, {
     key: "container",
     get: function get() {
@@ -2521,7 +2456,7 @@ function (_BaseWeapon) {
         x: 230,
         y: -20
       });
-      this.emit("shotIsDone"); // this.rageAnimation();
+      this.emit("shotIsDone");
     }
   }, {
     key: "_weaponAnimation",
@@ -2531,43 +2466,13 @@ function (_BaseWeapon) {
       //TODO: WEAPON POSITION
       this.rotationTween = new tween_js__WEBPACK_IMPORTED_MODULE_1___default.a.Tween(this._weaponContainer).to({
         rotation: [-0.17, 0]
-      }, 80).start();
+      }, this._weaponAnimationTime).start();
       this.slideTween = new tween_js__WEBPACK_IMPORTED_MODULE_1___default.a.Tween(this._slideSprite.pivot).to({
         x: [45, 0]
-      }, 80).onComplete(function () {
+      }, this._weaponAnimationTime).onComplete(function () {
         _this4._isAnimationEnd = true;
       }).start();
-    } // rageAnimation() {
-    //     const bullets = [];
-    //     this._rageBulletContainer = GraphicsHelper.createContainer({
-    //         x: this._weaponContainer.x + this._mainSprite.width,
-    //         y: this._weaponContainer.y,
-    //     });
-    //     this._rageBulletContainer.setParent(this._weaponContainer);
-    //     for (let i = 0; i <= 20; i++) {
-    //         const graphics = new PIXI.Graphics();
-    //         const color = Utils.getRandomColor();
-    //         const radius = Utils.random(10, 30);
-    //         graphics.lineStyle(0); // draw a circle, set the lineStyle to zero so the circle doesn't have an outline
-    //         graphics.beginFill(color, 1);
-    //         graphics.drawCircle(-80, -100, radius);
-    //         graphics.endFill();
-    //         bullets.push(graphics);
-    //         this._rageBulletContainer.addChild(graphics);
-    //     }
-    //     bullets.forEach(bullet => {
-    //         const delay = Utils.random(0, 400);
-    //         const a = new TWEEN.Tween(bullet)
-    //             .delay(delay)
-    //             .to({ x: 900, y: 100 }, 360)
-    //             .onComplete(() => {
-    //                 // bullet.destroy();
-    //             })
-    //             .start();
-    //         console.log(a, "a");
-    //     });
-    // }
-
+    }
   }, {
     key: "_bulletAnimation",
     value: function _bulletAnimation(coordinates) {
@@ -2673,18 +2578,18 @@ function (_BaseWeapon2) {
       var endXPosition = this._weaponContainer.x;
       this.rotationTween = new tween_js__WEBPACK_IMPORTED_MODULE_1___default.a.Tween(this._weaponContainer).to({
         rotation: [-0.17, 0]
-      }, 80).start();
+      }, this._weaponAnimationTime).start();
       this.moveTween = new tween_js__WEBPACK_IMPORTED_MODULE_1___default.a.Tween(this._weaponContainer).to({
         x: [-20, endXPosition]
-      }, 80).onComplete(function () {
+      }, this._weaponAnimationTime).onComplete(function () {
         _this6._isAnimationEnd = true;
       }).start();
       this.slideTween = new tween_js__WEBPACK_IMPORTED_MODULE_1___default.a.Tween(this._slideSprite.scale).to({
         x: [1, 0, 1]
-      }, 80).start();
+      }, this._weaponAnimationTime).start();
       this.knifeRotationTween = new tween_js__WEBPACK_IMPORTED_MODULE_1___default.a.Tween(this._knife).to({
         rotation: [-0.3, 0.3, -0.2, 0.2, 0.1, 0.1, 0]
-      }, 180).start();
+      }, this._weaponAnimationTime * 2).start();
     }
   }, {
     key: "_bulletAnimation",
@@ -3231,6 +3136,57 @@ __webpack_require__.r(__webpack_exports__);
   shotReward: 1000,
   openLevelCost: 1000000
 }]);
+
+/***/ }),
+/* 88 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  alpha: {
+    start: 0,
+    end: 1
+  },
+  scale: {
+    start: 0.3,
+    end: 1.5,
+    minimumScaleMultiplier: 0.5
+  },
+  speed: {
+    start: 300,
+    end: 500,
+    minimumSpeedMultiplier: 2
+  },
+  acceleration: {
+    x: 0,
+    y: 0
+  },
+  maxSpeed: 3,
+  startRotation: {
+    min: -6,
+    max: 6
+  },
+  noRotation: true,
+  rotationSpeed: {
+    min: 0,
+    max: 20
+  },
+  lifetime: {
+    min: 1.8,
+    max: 2
+  },
+  blendMode: "normal",
+  frequency: 0.25,
+  emitterLifetime: -1,
+  maxParticles: 500,
+  pos: {
+    x: 0,
+    y: 0
+  },
+  addAtBack: false,
+  spawnType: "point"
+});
 
 /***/ })
 /******/ ]);
