@@ -174,13 +174,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 document.addEventListener("DOMContentLoaded", function () {
-  var container = document.querySelector(".content");
-
-  if (container) {
-    _engine_Starter__WEBPACK_IMPORTED_MODULE_1__["default"].init(container).then(function () {
-      var game = new _engine_Game_js__WEBPACK_IMPORTED_MODULE_2__["default"]();
-    });
-  }
+  // const container = document.querySelector(".content");
+  // if (container) {
+  _engine_Starter__WEBPACK_IMPORTED_MODULE_1__["default"].init().then(function () {
+    var game = new _engine_Game_js__WEBPACK_IMPORTED_MODULE_2__["default"]();
+  }); // }
 });
 
 /***/ }),
@@ -231,7 +229,6 @@ function () {
     _classCallCheck(this, Starter);
 
     this.app = null;
-    this._orientation = null;
     this._init = {};
     this._init.initPromise = new Promise(function (resolve) {
       _this._init.setInitiated = resolve;
@@ -248,13 +245,14 @@ function () {
       var container = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document.body;
       var width = window.innerWidth;
       var height = window.innerHeight;
+      var view = document.querySelector("content");
       this.app = new pixi_js__WEBPACK_IMPORTED_MODULE_0__["Application"]({
         width: width,
         height: height,
         transparent: true,
-        resizeTo: container
-      });
-      this.app.renderer.autoResize = true;
+        view: view
+      }); // this.app.renderer.autoResize = true;
+
       container.appendChild(this.app.view);
       this._ticker = new pixi_js__WEBPACK_IMPORTED_MODULE_0__["Ticker"]();
 
@@ -278,35 +276,32 @@ function () {
   }, {
     key: "resize",
     value: function resize() {
+      console.log("STARTER");
       var _this$size = this.size,
           width = _this$size.width,
           height = _this$size.height;
-      var ratio = width / height;
-      var w, h;
+      var _window = window,
+          currW = _window.innerWidth,
+          currH = _window.innerHeight;
+      var newW, newH;
 
-      if (window.innerWidth / window.innerHeight >= ratio) {
-        w = window.innerHeight * ratio;
-        h = window.innerHeight;
-
-        this._emitOrientationChangeEvent("landscape");
+      if (currH > currW) {
+        //portrait
+        newW = width;
+        newH = newW * (currH / currW);
       } else {
-        w = window.innerWidth;
-        h = window.innerWidth / ratio;
-
-        this._emitOrientationChangeEvent("portrait");
+        //landscape
+        newH = height;
+        newW = newH * (currW / currH);
       }
 
-      this.app.renderer.resize(w, h);
-      this.app.stage.scale.x = w / width;
-      this.app.stage.scale.y = h / height;
-    }
-  }, {
-    key: "_emitOrientationChangeEvent",
-    value: function _emitOrientationChangeEvent(newOrientation) {
-      if (this._orientation != newOrientation) {
-        this._orientation = newOrientation;
-        this.emit("orientation_".concat(newOrientation));
-      }
+      this.app.view.style.width = newW + "px";
+      this.app.view.style.height = newH + "px";
+      this.app.renderer.resize(newW, newH);
+      this.emit("onResize", {
+        w: newW,
+        h: newH
+      });
     }
   }, {
     key: "initiated",
@@ -383,14 +378,14 @@ var starter = new Starter();
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   app: {
-    width: 1280,
-    height: 1920
+    width: 1000,
+    height: 1000
   },
   stage: {
-    height: 400
+    height: 200
   },
   score: {
-    width: 1280,
+    width: 960,
     height: 200
   },
   weaponPosition: {
@@ -662,8 +657,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_ScoreBar__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(68);
 /* harmony import */ var _scenes_SceneManager__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(74);
 /* harmony import */ var _scenes_IntroScene__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(75);
-/* harmony import */ var _scenes_OutroScene__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(77);
-/* harmony import */ var _components_StageManager__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(78);
+/* harmony import */ var _scenes_OutroScene__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(76);
+/* harmony import */ var _components_StageManager__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(77);
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 
@@ -757,6 +752,25 @@ function (_Resizable) {
   }
 
   _createClass(ScoreBar, [{
+    key: "onResize",
+    value: function onResize(data) {
+      var w = data.w,
+          h = data.h;
+
+      if (w > h) {//landscape
+      }
+
+      if (w < h) {//portrait
+      }
+
+      if (this._backgroundPolygon) {
+        this._backgroundPolygon.width = w;
+        this._moneyText.x = w / 2;
+        this._moneyText.y = 100;
+        this._ctaDownload.container.x = w - this._ctaDownload.container.width - 50;
+      }
+    }
+  }, {
     key: "init",
     value: function init() {
       var _this2 = this;
@@ -765,24 +779,26 @@ function (_Resizable) {
           width = _this$_config.width,
           height = _this$_config.height;
       var scoreBar = _settings_appSettings__WEBPACK_IMPORTED_MODULE_2__["default"].colors.scoreBar;
+      var _window = window,
+          w = _window.innerWidth;
+      var h = _settings_appSettings__WEBPACK_IMPORTED_MODULE_2__["default"].score.height;
       this._container = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createContainer({});
 
       this._container.setParent(_engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.stage);
 
-      var backgroundPolygon = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawPolygon({
-        path: _settings_polygonsPath__WEBPACK_IMPORTED_MODULE_6__["default"].scoreBar,
+      this._backgroundPolygon = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawPolygon({
+        path: _settings_polygonsPath__WEBPACK_IMPORTED_MODULE_6__["default"],
         color: scoreBar
       });
 
-      this._container.addChild(backgroundPolygon);
+      this._container.addChild(this._backgroundPolygon);
 
       this._moneyText = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
         x: width / 2,
         y: height / 2,
         style: {
           fill: "white",
-          // fontFamily: "Comic Sans MS",
-          fontSize: 110
+          fontSize: 130
         }
       });
 
@@ -810,6 +826,12 @@ function (_Resizable) {
         y: 250
       }, 0).start();
       this._container.visible = false;
+      setTimeout(function () {
+        _this2.onResize({
+          w: w,
+          h: h
+        });
+      }, 100);
     }
   }, {
     key: "onLandscape",
@@ -917,11 +939,15 @@ function () {
           width = _settings$width2 === void 0 ? 0 : _settings$width2,
           _settings$height2 = settings.height,
           height = _settings$height2 === void 0 ? 0 : _settings$height2,
-          color = settings.color;
+          color = settings.color,
+          onClick = settings.onClick,
+          _settings$alpha = settings.alpha,
+          alpha = _settings$alpha === void 0 ? 1 : _settings$alpha;
       var container = new pixi_js__WEBPACK_IMPORTED_MODULE_0__["Container"](); // move container to screen center
 
       container.x = x;
       container.y = y;
+      container.alpha = alpha;
       container.width = width;
       container.height = height;
       var sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_0__["Sprite"](pixi_js__WEBPACK_IMPORTED_MODULE_0__["Texture"].WHITE);
@@ -929,6 +955,13 @@ function () {
       sprite.height = height;
       sprite.tint = color;
       sprite.setParent(container);
+
+      if (onClick) {
+        container.buttonMode = true;
+        container.interactive = true;
+        container.on("pointerdown", onClick);
+      }
+
       return container;
     }
   }, {
@@ -939,12 +972,15 @@ function () {
           x = _settings$x3 === void 0 ? 0 : _settings$x3,
           _settings$y3 = settings.y,
           y = _settings$y3 === void 0 ? 0 : _settings$y3,
+          _settings$alpha2 = settings.alpha,
+          alpha = _settings$alpha2 === void 0 ? 1 : _settings$alpha2,
           name = settings.name,
           anchor = settings.anchor;
       var texture = _engine_TexturesLoader__WEBPACK_IMPORTED_MODULE_1__["default"].getByName(name);
       var sprite = new pixi_js__WEBPACK_IMPORTED_MODULE_0__["Sprite"](texture);
       sprite.x = x;
       sprite.y = y;
+      sprite.alpha = alpha;
 
       if (anchor) {
         sprite.anchor.set(anchor);
@@ -1017,8 +1053,8 @@ function () {
       var _settings$color2 = settings.color,
           color = _settings$color2 === void 0 ? 0x000000 : _settings$color2,
           path = settings.path,
-          _settings$alpha = settings.alpha,
-          alpha = _settings$alpha === void 0 ? 1 : _settings$alpha;
+          _settings$alpha3 = settings.alpha,
+          alpha = _settings$alpha3 === void 0 ? 1 : _settings$alpha3;
       var graphics = new pixi_js__WEBPACK_IMPORTED_MODULE_0__["Graphics"]();
       graphics.lineStyle(0);
       graphics.beginFill(color, alpha);
@@ -1143,13 +1179,38 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _appSettings__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(62);
 
-var offset1 = 200;
-var offset2 = 150;
-var width = _appSettings__WEBPACK_IMPORTED_MODULE_0__["default"].score.width;
-var height = _appSettings__WEBPACK_IMPORTED_MODULE_0__["default"].score.height;
-/* harmony default export */ __webpack_exports__["default"] = ({
-  scoreBar: [0, 0, width, 0, width, height, width / 2 + offset1, height, width / 2 + offset2, height + 50, width / 2 - offset2, height + 50, width / 2 - offset1, height, 0, height, 0, 0]
-});
+
+var getPolygon = function getPolygon() {
+  var offset1 = 200;
+  var offset2 = 150;
+  var width = window.innerWidth;
+  var height = _appSettings__WEBPACK_IMPORTED_MODULE_0__["default"].score.height;
+  var polygon = [0, 0, width, 0, width, height, width / 2 + offset1, height, width / 2 + offset2, height + 50, width / 2 - offset2, height + 50, width / 2 - offset1, height, 0, height, 0, 0];
+  return polygon;
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (getPolygon()); // export default {
+//     scoreBar: [
+//         0,
+//         0,
+//         width,
+//         0,
+//         width,
+//         height,
+//         width / 2 + offset1,
+//         height,
+//         width / 2 + offset2,
+//         height + 50,
+//         width / 2 - offset2,
+//         height + 50,
+//         width / 2 - offset1,
+//         height,
+//         0,
+//         height,
+//         0,
+//         0,
+//     ],
+// };
 
 /***/ }),
 /* 73 */
@@ -1174,20 +1235,14 @@ function () {
 
     _classCallCheck(this, Resizable);
 
-    _Starter__WEBPACK_IMPORTED_MODULE_0__["default"].on("orientation_portrait", function () {
-      _this.onPortrait();
-    });
-    _Starter__WEBPACK_IMPORTED_MODULE_0__["default"].on("orientation_landscape", function () {
-      _this.onLandscape();
+    _Starter__WEBPACK_IMPORTED_MODULE_0__["default"].on("onResize", function (data) {
+      _this.onResize(data);
     });
   }
 
   _createClass(Resizable, [{
-    key: "onPortrait",
-    value: function onPortrait() {}
-  }, {
-    key: "onLandscape",
-    value: function onLandscape() {}
+    key: "onResize",
+    value: function onResize(data) {}
   }]);
 
   return Resizable;
@@ -1262,15 +1317,27 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var component_emitter__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(component_emitter__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _components_ScoreBar__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(68);
 /* harmony import */ var _settings_i18n__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(71);
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+/* harmony import */ var _engine_Resizable__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(73);
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(8);
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
 
 
 
@@ -1281,29 +1348,79 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 var IntroScene =
 /*#__PURE__*/
-function () {
+function (_Resizable) {
+  _inherits(IntroScene, _Resizable);
+
   function IntroScene() {
+    var _this;
+
     _classCallCheck(this, IntroScene);
 
-    this._container = null;
-    this._substrate = null;
-    this._hintTween = null;
-    new component_emitter__WEBPACK_IMPORTED_MODULE_3___default.a(this);
-    this.init();
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(IntroScene).call(this));
+    _this._container = null;
+    _this._substrate = null;
+    _this._hintTween = null;
+    new component_emitter__WEBPACK_IMPORTED_MODULE_3___default.a(_assertThisInitialized(_this));
+
+    _this.drawAllElements();
+
+    _this.hide();
+
+    return _this;
   }
 
   _createClass(IntroScene, [{
-    key: "init",
-    value: function init() {
-      var _this = this;
+    key: "onResize",
+    value: function onResize(data) {
+      var w = data.w,
+          h = data.h; //landscape
 
-      var _appSettings$app = _objectSpread({}, _settings_appSettings__WEBPACK_IMPORTED_MODULE_2__["default"].app),
-          width = _appSettings$app.width,
-          height = _appSettings$app.height;
+      if (w > h) {
+        this._textHeader_1.y = h / 2 - 150;
+        this._textHeader_2.y = h / 2 + 110;
+      } //portrait
 
+
+      if (w < h) {
+        this._textHeader_1.y = h / 2 - 200;
+        this._textHeader_2.y = h / 2 + 100;
+      }
+
+      this._textHeader_1.x = w / 2;
+      this._textHeader_2.x = w / 2;
+      this._substrate.width = w;
+      this._substrate.height = h;
+    }
+  }, {
+    key: "_drawSubstrate",
+    value: function _drawSubstrate() {}
+  }, {
+    key: "drawText",
+    value: function drawText(settings) {
+      var sourceTxt = "input your text";
+      var _settings$text = settings.text,
+          text = _settings$text === void 0 ? sourceTxt : _settings$text,
+          _settings$x = settings.x,
+          x = _settings$x === void 0 ? 0 : _settings$x,
+          _settings$y = settings.y,
+          y = _settings$y === void 0 ? 0 : _settings$y,
+          style = settings.style;
+      var txt = new pixi_js__WEBPACK_IMPORTED_MODULE_7__["Text"](text, style);
+      txt.x = x;
+      txt.y = y;
+      txt.anchor.set(0.5);
+      return txt;
+    }
+  }, {
+    key: "drawAllElements",
+    value: function drawAllElements() {
+      var _this2 = this;
+
+      var _window = window,
+          w = _window.innerWidth,
+          h = _window.innerHeight;
       var textStyles = {
         fill: "white",
-        // fontFamily: "Courier New",
         fontSize: 200,
         fontWeight: 900
       };
@@ -1311,80 +1428,64 @@ function () {
 
       this._container.setParent(_engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.stage);
 
-      this._substrate = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawGraphics({
-        width: width,
-        height: height,
-        holeX: 80,
-        holeY: height - 280,
-        holeWidth: 340,
-        holeHeight: 240,
+      this._substrate = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createColorContainer({
+        width: w,
+        height: h,
         onClick: function onClick(e) {
-          _this.hide();
+          _this2.hide();
 
           _components_ScoreBar__WEBPACK_IMPORTED_MODULE_4__["default"].show();
           e.stopPropagation();
-
-          _this._container.removeChild(_this._blockedInteractionGraphics);
         }
       });
 
       this._substrate.setParent(this._container);
 
-      this._substrate.alpha = 0.5; //Block interaction in hole
-
-      this._blockedInteractionGraphics = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawGraphics({
-        width: 340,
-        height: 240,
-        x: 80,
-        y: height - 280,
-        onClick: function onClick(e) {
-          _this.hide();
-
-          _components_ScoreBar__WEBPACK_IMPORTED_MODULE_4__["default"].show();
-          _this._blockedInteractionGraphics.visible = false;
-          e.stopPropagation();
-        }
-      });
-
-      this._blockedInteractionGraphics.setParent(this._container);
-
-      this._blockedInteractionGraphics.alpha = 0;
-      _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
-        x: width / 2,
-        y: height / 2,
+      this._substrate.alpha = 0.3;
+      this._textHeader_1 = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
+        x: w / 2,
+        y: h / 2,
         text: _settings_i18n__WEBPACK_IMPORTED_MODULE_5__["default"].introScene_1,
         style: textStyles
-      }).setParent(this._container);
-      _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
-        x: width / 2,
-        y: height / 2 + 220,
+      });
+
+      this._textHeader_1.setParent(this._container);
+
+      this._textHeader_2 = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
+        x: w / 2,
+        y: h / 2 + 220,
         text: _settings_i18n__WEBPACK_IMPORTED_MODULE_5__["default"].introScene_2,
         style: textStyles
-      }).setParent(this._container);
-      this.hide();
+      });
+
+      this._textHeader_2.setParent(this._container);
     }
   }, {
     key: "show",
     value: function show() {
       this._container.alpha = 1;
+      this._substrate.visible = true;
       this._substrate.interactive = true;
     }
   }, {
     key: "hide",
     value: function hide() {
       this._container.alpha = 0;
+      this._substrate.visible = false;
       this._substrate.interactive = false;
     }
+  }, {
+    key: "destroy",
+    value: function destroy() {}
   }]);
 
   return IntroScene;
-}();
+}(_engine_Resizable__WEBPACK_IMPORTED_MODULE_6__["default"]);
 
 /* harmony default export */ __webpack_exports__["default"] = (IntroScene);
 
 /***/ }),
-/* 76 */,
-/* 77 */
+/* 76 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1395,6 +1496,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_ScoreBar__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(68);
 /* harmony import */ var _components_Button__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(70);
 /* harmony import */ var _settings_i18n__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(71);
+/* harmony import */ var _engine_Resizable__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(73);
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -1405,6 +1509,17 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+
 
 
 
@@ -1414,19 +1529,38 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 var OutroScene =
 /*#__PURE__*/
-function () {
+function (_Resizable) {
+  _inherits(OutroScene, _Resizable);
+
   function OutroScene() {
+    var _this;
+
     _classCallCheck(this, OutroScene);
 
-    this._container = null;
-    this._substrate = null;
-    this.init();
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(OutroScene).call(this));
+    _this._container = null;
+    _this._substrate = null;
+
+    _this.init();
+
+    return _this;
   }
 
   _createClass(OutroScene, [{
+    key: "onResize",
+    value: function onResize(data) {
+      var w = data.w,
+          h = data.h; //landscape
+
+      if (w > h) {} //portrait
+
+
+      if (h > w) {}
+    }
+  }, {
     key: "init",
     value: function init() {
-      var _this = this;
+      var _this2 = this;
 
       var _appSettings$app = _objectSpread({}, _settings_appSettings__WEBPACK_IMPORTED_MODULE_2__["default"].app),
           width = _appSettings$app.width,
@@ -1514,7 +1648,7 @@ function () {
         text: _settings_i18n__WEBPACK_IMPORTED_MODULE_5__["default"].installButton,
         rounded: 20,
         onClick: function onClick() {
-          _this._ctaHandler();
+          _this2._ctaHandler();
         },
         fontSize: 70
       });
@@ -1544,19 +1678,19 @@ function () {
   }]);
 
   return OutroScene;
-}();
+}(_engine_Resizable__WEBPACK_IMPORTED_MODULE_6__["default"]);
 
 /* harmony default export */ __webpack_exports__["default"] = (OutroScene);
 
 /***/ }),
-/* 78 */
+/* 77 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _components_Stage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(79);
+/* harmony import */ var _components_Stage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(78);
 /* harmony import */ var _settings_appSettings__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(62);
-/* harmony import */ var _settings_stagesSettings__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(87);
+/* harmony import */ var _settings_stagesSettings__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(88);
 /* harmony import */ var _components_ScoreBar__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(68);
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(8);
 /* harmony import */ var tween_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(65);
@@ -1564,11 +1698,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(69);
 /* harmony import */ var _engine_Starter__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(7);
 /* harmony import */ var _scenes_SceneManager__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(74);
+/* harmony import */ var _engine_Resizable__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(73);
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -1582,57 +1730,118 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 var StageManager =
 /*#__PURE__*/
-function () {
+function (_Resizable) {
+  _inherits(StageManager, _Resizable);
+
   function StageManager() {
+    var _this;
+
     _classCallCheck(this, StageManager);
 
-    this._stages = [];
-    this._openStages = [];
-    this._activeStage = null;
-    this._nextStage = null;
-    this._gameProgress = 0;
-    this._sizes = {
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(StageManager).call(this));
+    _this._stages = [];
+    _this._openStages = [];
+    _this._activeStage = null;
+    _this._nextStage = null;
+    _this._gameProgress = 0;
+    _this._sizes = {
       appHeight: _settings_appSettings__WEBPACK_IMPORTED_MODULE_1__["default"].app.height,
       stageHeight: _settings_appSettings__WEBPACK_IMPORTED_MODULE_1__["default"].stage.height
     };
+    return _this;
   }
 
   _createClass(StageManager, [{
     key: "init",
     value: function init() {
+      var _window = window,
+          h = _window.innerHeight,
+          w = _window.innerWidth;
+
       this._drawStages();
 
       this._checkActiveStage();
+
+      this._container = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_6__["default"].createContainer({});
+
+      this._container.setParent(_engine_Starter__WEBPACK_IMPORTED_MODULE_7__["default"].app.stage);
+
+      this._rageModeBackground = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_6__["default"].createColorContainer({
+        x: -10,
+        y: -10,
+        width: w + 20,
+        height: h + 20,
+        color: "0x990000",
+        alpha: 0
+      });
+
+      this._rageModeBackground.setParent(this._container);
+
+      this._flameIcon = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_6__["default"].createSpriteFromAtlas({
+        x: 100,
+        y: h - 150,
+        name: "flameIcon",
+        anchor: 0.5,
+        alpha: 0
+      });
+
+      this._flameIcon.setParent(this._container);
     }
   }, {
     key: "_drawStages",
     value: function _drawStages() {
-      var _this = this;
+      var _this2 = this;
 
-      var _this$_sizes = this._sizes,
-          stageHeight = _this$_sizes.stageHeight,
-          appHeight = _this$_sizes.appHeight;
+      var _window2 = window,
+          currW = _window2.innerWidth,
+          currH = _window2.innerHeight;
       this._stages = _settings_stagesSettings__WEBPACK_IMPORTED_MODULE_2__["default"].map(function (stageInfo, index) {
         var stageNumber = index + 1;
 
-        var color = _this._getStageBackgroundColor(stageNumber);
+        var color = _this2._getStageBackgroundColor(stageNumber);
 
-        var yPosition = appHeight - stageHeight * stageNumber;
         var stage = new _components_Stage__WEBPACK_IMPORTED_MODULE_0__["default"]({
           color: color,
-          y: yPosition,
           info: stageInfo
         });
         stage.on("startRageMode", function () {
-          _this._runRageMode();
+          _this2._runRageMode();
         });
         return stage;
       });
+      setTimeout(function () {
+        _this2.onResize({
+          w: currW,
+          h: currH
+        });
+      }, 0);
+    }
+  }, {
+    key: "onResize",
+    value: function onResize(data) {
+      var w = data.w,
+          h = data.h;
+      var displayedLevel = w > h ? 3 : 4;
+      var stageHeight = h / displayedLevel;
+
+      this._stages.forEach(function (stage, index) {
+        var stageNumber = index + 1;
+        var yPosition = h - stageHeight * stageNumber;
+        stage._mainContainer.width = w;
+        stage._mainContainer.height = h / displayedLevel + 10;
+        stage._mainContainer.y = yPosition;
+      });
+
+      if (this._rageModeBackground) {
+        this._rageModeBackground.width = w;
+        this._rageModeBackground.height = h;
+        this._flameIcon.y = h - 100;
+      }
     }
   }, {
     key: "_checkActiveStage",
     value: function _checkActiveStage() {
-      var _this2 = this;
+      var _this3 = this;
 
       if (this._activeStage === null) {
         this._activeStage = this._stages[0];
@@ -1656,7 +1865,7 @@ function () {
         this._openStages.push(this._activeStage);
 
         var nextStageIndex = this._stages.findIndex(function (x) {
-          return x == _this2._activeStage;
+          return x == _this3._activeStage;
         });
 
         this._nextStage = this._stages[nextStageIndex + 1];
@@ -1670,7 +1879,7 @@ function () {
   }, {
     key: "_runRageMode",
     value: function _runRageMode() {
-      var _this3 = this;
+      var _this4 = this;
 
       this._openStages.forEach(function (stage) {
         stage.weapon.runRageModeAnimation();
@@ -1688,48 +1897,35 @@ function () {
         if (timeBeetweenShot <= 0) {
           timeBeetweenShot = 150;
 
-          _this3._makeShotAllGroup();
+          _this4._makeShotAllGroup();
         }
 
         if (timeToOffRageMode <= 0) {
           ticker.stop();
         }
       });
-      ticker.start(); //RED BACKGROUND LOGIC
+      ticker.start(); //RED BACKGROUND ANIMATION
 
-      var stageModeBackground = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_6__["default"].createColorContainer({
-        width: _settings_appSettings__WEBPACK_IMPORTED_MODULE_1__["default"].app.width,
-        height: _settings_appSettings__WEBPACK_IMPORTED_MODULE_1__["default"].app.height,
-        color: "0x990000"
-      });
-      stageModeBackground.setParent(_engine_Starter__WEBPACK_IMPORTED_MODULE_7__["default"].app.stage);
-      new tween_js__WEBPACK_IMPORTED_MODULE_5___default.a.Tween(stageModeBackground).to({
+      new tween_js__WEBPACK_IMPORTED_MODULE_5___default.a.Tween(this._rageModeBackground).to({
         alpha: [0.3, 0.1, 0.4, 0.1, 0.5, 0.2, 0.1, 0.4, 0]
       }, timeToOffRageMode).onComplete(function () {
-        _engine_Starter__WEBPACK_IMPORTED_MODULE_7__["default"].app.stage.removeChild(stageModeBackground);
+        _engine_Starter__WEBPACK_IMPORTED_MODULE_7__["default"].app.stage.removeChild(_this4._rageModeBackground);
 
-        _this3._openStages.forEach(function (stage) {
+        _this4._openStages.forEach(function (stage) {
           stage.weapon.stopRageModeAnimation();
         });
-      }).start(); //FLAME ICON LOGIC
-
-      var flameIcon = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_6__["default"].createSpriteFromAtlas({
-        x: 100,
-        y: _settings_appSettings__WEBPACK_IMPORTED_MODULE_1__["default"].app.height - 130,
-        name: "flameIcon",
-        anchor: 0.5
-      });
-      flameIcon.setParent(_engine_Starter__WEBPACK_IMPORTED_MODULE_7__["default"].app.stage);
+      }).start();
       var timeOnAnimation = 700;
       var repeatAnimation = Math.floor(timeToOffRageMode / timeOnAnimation) - 1;
-      new tween_js__WEBPACK_IMPORTED_MODULE_5___default.a.Tween(flameIcon.scale).to({
+      this._flameIcon.alpha = 1;
+      new tween_js__WEBPACK_IMPORTED_MODULE_5___default.a.Tween(this._flameIcon.scale).to({
         x: [1.1, 1],
         y: [1.1, 1]
       }, timeOnAnimation).onComplete(function () {
-        new tween_js__WEBPACK_IMPORTED_MODULE_5___default.a.Tween(flameIcon).to({
+        new tween_js__WEBPACK_IMPORTED_MODULE_5___default.a.Tween(_this4._flameIcon).to({
           alpha: 0
         }, timeOnAnimation).start().onComplete(function () {
-          _engine_Starter__WEBPACK_IMPORTED_MODULE_7__["default"].app.stage.removeChild(flameIcon);
+          _engine_Starter__WEBPACK_IMPORTED_MODULE_7__["default"].app.stage.removeChild(_this4._flameIcon);
           _scenes_SceneManager__WEBPACK_IMPORTED_MODULE_8__["default"].showScene("outro");
         });
       }).repeat(repeatAnimation).start();
@@ -1755,16 +1951,16 @@ function () {
   }, {
     key: "_addEventListener",
     value: function _addEventListener(stage) {
-      var _this4 = this;
+      var _this5 = this;
 
       stage.on("stageScoreUpdate", function () {
         var shotReward = stage.configuration.shotReward;
         _components_ScoreBar__WEBPACK_IMPORTED_MODULE_3__["default"].update(shotReward);
 
-        if (stage == _this4._activeStage) {
-          _this4._gameProgress++;
+        if (stage == _this5._activeStage) {
+          _this5._gameProgress++;
 
-          _this4._checkActiveStage();
+          _this5._checkActiveStage();
         }
       });
     }
@@ -1780,12 +1976,12 @@ function () {
   }]);
 
   return StageManager;
-}();
+}(_engine_Resizable__WEBPACK_IMPORTED_MODULE_9__["default"]);
 
 /* harmony default export */ __webpack_exports__["default"] = (new StageManager());
 
 /***/ }),
-/* 79 */
+/* 78 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1793,18 +1989,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _engine_Starter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7);
 /* harmony import */ var _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(69);
 /* harmony import */ var _settings_appSettings__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(62);
-/* harmony import */ var _weapons_WeaponFactory__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(80);
+/* harmony import */ var _weapons_WeaponFactory__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(79);
 /* harmony import */ var _ScoreBar__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(68);
-/* harmony import */ var _TargetsManager__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(84);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(82);
+/* harmony import */ var _TargetsManager__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(85);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(81);
 /* harmony import */ var tween_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(65);
 /* harmony import */ var tween_js__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(tween_js__WEBPACK_IMPORTED_MODULE_7__);
 /* harmony import */ var component_emitter__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(66);
 /* harmony import */ var component_emitter__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(component_emitter__WEBPACK_IMPORTED_MODULE_8__);
 /* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(8);
-/* harmony import */ var _Hint__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(86);
+/* harmony import */ var _Hint__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(87);
 /* harmony import */ var _Button__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(70);
 /* harmony import */ var _settings_i18n__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(71);
+/* harmony import */ var _engine_Resizable__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(73);
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -1814,6 +2013,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -1831,57 +2041,113 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 var Stage =
 /*#__PURE__*/
-function () {
+function (_Resizable) {
+  _inherits(Stage, _Resizable);
+
   function Stage(config, stageStrategy) {
+    var _this;
+
     _classCallCheck(this, Stage);
 
-    this._config = _objectSpread({}, config, _settings_appSettings__WEBPACK_IMPORTED_MODULE_2__["default"].stage, {
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Stage).call(this));
+    _this._config = _objectSpread({}, config, _settings_appSettings__WEBPACK_IMPORTED_MODULE_2__["default"].stage, {
       width: _settings_appSettings__WEBPACK_IMPORTED_MODULE_2__["default"].app.width
     });
-    this._stageStrategy = stageStrategy;
-    this._mainContainer = null;
-    this._lockContainer = null;
-    this._unlockContainer = null;
-    this.weapon = null;
-    this._lock = null;
-    this._ticker = null;
-    this.level = this._config.info.level;
-    new component_emitter__WEBPACK_IMPORTED_MODULE_8___default.a(this);
+    _this._stageStrategy = stageStrategy;
+    _this._mainContainer = null;
+    _this._lockContainer = null;
+    _this._unlockContainer = null;
+    _this.weapon = null;
+    _this._lock = null;
+    _this._ticker = null;
+    _this.level = _this._config.info.level;
+    new component_emitter__WEBPACK_IMPORTED_MODULE_8___default.a(_assertThisInitialized(_this));
 
-    this._init();
+    _this._init();
 
-    this.hide();
+    _this.hide();
+
+    var _window = window,
+        currW = _window.innerWidth,
+        currH = _window.innerHeight; //TODO: create new logic. Resizable
+
+    setTimeout(function () {
+      _this.onResize({
+        w: currW,
+        h: currH
+      });
+    }, 20);
+    return _this;
   }
 
   _createClass(Stage, [{
+    key: "onResize",
+    value: function onResize(data) {
+      var w = data.w,
+          h = data.h; //landscape
+
+      if (w > h) {
+        this._lock.y = 100;
+        this._levelInfoText.y = 140;
+        this.weapon.container.y = -50;
+        this.weapon.container.scale.set(1);
+        this.weapon.container.x = 100;
+      } //portrait
+
+
+      if (h > w) {
+        this._lock.y = 200;
+        this._levelInfoText.y = 240;
+        this.weapon.container.y = 30;
+        this.weapon.container.scale.set(0.7);
+        this.weapon.container.x = 0;
+      }
+
+      if (this._openBtnContainer) {
+        this._openBtnContainer.x = w / 2 - 125; //half button width
+
+        this._openBtnContainer.y = w > h ? 100 : 150;
+      }
+
+      if (this._hint) {
+        this._hint.sprite.x = w > h ? 300 : 150; //half button width
+
+        this._hint.sprite.y = 150;
+      }
+
+      this._unlockContainer.y = this._mainContainer.y;
+      this._lockContainer.y = this._mainContainer.y;
+      this._lock.x = w / 2 - 120;
+      this._levelInfoText.x = this._lock.x + this._lock.width + 100;
+    }
+  }, {
     key: "_init",
     value: function _init() {
-      var _this = this;
+      var _this2 = this;
 
       var _this$_config = this._config,
-          width = _this$_config.width,
-          height = _this$_config.height,
           color = _this$_config.color,
-          y = _this$_config.y,
           _this$_config$info = _this$_config.info,
           weaponType = _this$_config$info.weaponType,
           level = _this$_config$info.level,
           name = _this$_config$info.name;
-      var offScreenWidth = 20;
+      var width = window.innerWidth;
+      var _window2 = window,
+          currW = _window2.innerWidth,
+          currH = _window2.innerHeight;
+      var stageHeight = currH / 4;
       this._mainContainer = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createColorContainer({
-        x: -offScreenWidth / 2,
-        y: y - offScreenWidth / 2,
-        width: width + offScreenWidth,
-        height: height + offScreenWidth,
+        width: currW,
+        height: stageHeight,
         color: color
       });
 
-      this._mainContainer.setParent(_engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.stage); //Unlocked stage elements
+      this._mainContainer.setParent(_engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.stage); // //Unlocked stage elements
 
 
       this._unlockContainer = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createContainer();
 
-      this._unlockContainer.setParent(this._mainContainer);
+      this._unlockContainer.setParent(_engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.stage);
 
       this.targetsManager = new _TargetsManager__WEBPACK_IMPORTED_MODULE_5__["default"]({
         x: width - 250,
@@ -1889,7 +2155,7 @@ function () {
       });
       this.targetsManager.container.setParent(this._unlockContainer);
       this.targetsManager.on("rageMode", function () {
-        _this.emit("startRageMode");
+        _this2.emit("startRageMode");
       });
       this._weaponName = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
         x: 120,
@@ -1897,7 +2163,6 @@ function () {
         text: "".concat(name),
         style: {
           fill: "white",
-          // fontFamily: "Comic Sans MS",
           fontSize: 40
         }
       });
@@ -1905,7 +2170,7 @@ function () {
       this._weaponName.setParent(this._unlockContainer);
 
       this.weapon = _weapons_WeaponFactory__WEBPACK_IMPORTED_MODULE_3__["default"].createWeapon(weaponType, {
-        y: y
+        y: stageHeight / 2
       });
       this.weapon.container.setParent(this._unlockContainer);
 
@@ -1913,14 +2178,12 @@ function () {
 
       this._showStartHint(level);
 
-      this._initAutoPlay(); //Locked stage elements
+      this._initAutoPlay(); // //Locked stage elements
 
 
-      this._lockContainer = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createContainer({
-        y: height / 2
-      });
+      this._lockContainer = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createContainer({});
 
-      this._lockContainer.setParent(this._mainContainer);
+      this._lockContainer.setParent(_engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.stage);
 
       this._lock = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createSpriteFromAtlas({
         x: width / 2 - 100,
@@ -1931,11 +2194,9 @@ function () {
 
       this._levelInfoText = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
         x: this._lock.x + this._lock.width + 80,
-        y: 30,
         text: "".concat(_settings_i18n__WEBPACK_IMPORTED_MODULE_12__["default"].level, " ").concat(level),
         style: {
           fill: "white",
-          // fontFamily: "Comic Sans MS",
           fontSize: 40
         }
       });
@@ -1945,14 +2206,19 @@ function () {
   }, {
     key: "_drawOpenLevelButton",
     value: function _drawOpenLevelButton() {
-      var _this2 = this;
+      var _this3 = this;
 
       var _this$_config2 = this._config,
           width = _this$_config2.width,
           openLevelCost = _this$_config2.info.openLevelCost;
+      var _window3 = window,
+          currW = _window3.innerWidth,
+          currH = _window3.innerHeight;
+      var y = currW > currH ? 100 : 150;
       this._openBtnContainer = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createContainer({
-        x: width / 2 - 125 // 100- half width button
-
+        x: currW / 2 - 125,
+        // 125- half width button
+        y: y
       });
 
       this._openBtnContainer.setParent(this._lockContainer);
@@ -1966,14 +2232,14 @@ function () {
         color: openStageButton,
         text: "".concat(_settings_i18n__WEBPACK_IMPORTED_MODULE_12__["default"].usdIcon).concat(openLevelCost),
         onClick: function onClick() {
-          _this2._openButton.container.visible = false;
+          _this3._openButton.container.visible = false;
 
           if (_ScoreBar__WEBPACK_IMPORTED_MODULE_4__["default"].money < openLevelCost) {
             console.log("not enough money");
             return;
           }
 
-          _this2.show();
+          _this3.show();
 
           _ScoreBar__WEBPACK_IMPORTED_MODULE_4__["default"].update(-openLevelCost);
         },
@@ -1994,16 +2260,16 @@ function () {
   }, {
     key: "_initShotListener",
     value: function _initShotListener() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.weapon.on("shotRequest", function () {
-        _this3._makeShot();
+        _this4._makeShot();
       });
     }
   }, {
     key: "_showStartHint",
     value: function _showStartHint(level) {
-      var _this4 = this;
+      var _this5 = this;
 
       // TODO: move hint coordinates settings to weapon
       var hintCoordinates = null;
@@ -2012,35 +2278,35 @@ function () {
         case "1":
           hintCoordinates = {
             x: 250,
-            y: 200
+            y: 160
           };
           break;
 
         case "2":
           hintCoordinates = {
             x: 350,
-            y: 180
+            y: 160
           };
           break;
       }
 
       if (hintCoordinates !== null) {
         // TODO: add 'destroy' method into hint
-        var hint = new _Hint__WEBPACK_IMPORTED_MODULE_10__["default"](hintCoordinates);
+        this._hint = new _Hint__WEBPACK_IMPORTED_MODULE_10__["default"](hintCoordinates);
 
-        this._unlockContainer.addChild(hint.sprite);
+        this._unlockContainer.addChild(this._hint.sprite);
 
         this.weapon.once("shotIsDone", function () {
-          hint.hide();
+          _this5._hint.hide();
 
-          _this4._unlockContainer.removeChild(hint.sprite);
+          _this5._unlockContainer.removeChild(_this5._hint.sprite);
         });
       }
     }
   }, {
     key: "_initAutoPlay",
     value: function _initAutoPlay() {
-      var _this5 = this;
+      var _this6 = this;
 
       // TODO: move setting to config
       var timeBetweenShoot = 1000;
@@ -2051,44 +2317,44 @@ function () {
         timeToNextShoot = timeBetweenShoot;
       });
       this.weapon.once("shotIsDone", function () {
-        _this5._ticker = new pixi_js__WEBPACK_IMPORTED_MODULE_9__["Ticker"]();
+        _this6._ticker = new pixi_js__WEBPACK_IMPORTED_MODULE_9__["Ticker"]();
 
-        _this5._ticker.add(function () {
+        _this6._ticker.add(function () {
           if (autoShotsLeft <= 0) {
-            _this5._ticker.stop();
+            _this6._ticker.stop();
 
-            _this5._ticker.destroy();
+            _this6._ticker.destroy();
 
             return;
           }
 
-          var delta = _this5._ticker.deltaMS;
+          var delta = _this6._ticker.deltaMS;
           timeToNextShoot -= delta;
 
           if (timeToNextShoot <= 0) {
-            _this5._makeShot();
+            _this6._makeShot();
 
             timeToNextShoot = timeBetweenShoot;
           }
         });
 
-        _this5._ticker.start();
+        _this6._ticker.start();
       });
     }
   }, {
     key: "_makeShot",
     value: function _makeShot() {
-      var _this6 = this;
+      var _this7 = this;
 
       var coordinates = this.targetsManager.getHolePosition();
       this.weapon.once("shotIsDone", function () {
-        var shotReward = _this6._config.info.shotReward;
+        var shotReward = _this7._config.info.shotReward;
 
-        _this6.targetsManager.makeHole(coordinates);
+        _this7.targetsManager.makeHole(coordinates);
 
-        _this6._drawRewardText(shotReward);
+        _this7._drawRewardText(shotReward);
 
-        _this6.emit("stageScoreUpdate");
+        _this7.emit("stageScoreUpdate");
       });
       this.weapon.shot(coordinates);
     }
@@ -2097,23 +2363,22 @@ function () {
     value: function _drawRewardText(value) {
       var y = _utils_utils__WEBPACK_IMPORTED_MODULE_6__["default"].random(100, 240);
       var sign = _utils_utils__WEBPACK_IMPORTED_MODULE_6__["default"].random(0, 1) === 0 ? -1 : 1;
-      this._rewardContainer = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createContainer({});
-
-      this._rewardContainer.setParent(this._mainContainer);
-
+      var _window4 = window,
+          currW = _window4.innerWidth,
+          currH = _window4.innerHeight;
+      var offset = currW > currH ? 400 : 300;
       var rewardText = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
         text: "".concat(_settings_i18n__WEBPACK_IMPORTED_MODULE_12__["default"].usdIcon).concat(value),
-        x: this._mainContainer.width - 350,
+        x: window.innerWidth - offset,
         y: y,
         style: {
           fill: "white",
-          // fontFamily: "Comic Sans MS",
           fontSize: 50
         }
       });
-      rewardText.setParent(this._rewardContainer);
+      rewardText.setParent(this._unlockContainer);
       rewardText.rotation = Math.random() * sign;
-      new tween_js__WEBPACK_IMPORTED_MODULE_7___default.a.Tween(this._rewardContainer).to({
+      new tween_js__WEBPACK_IMPORTED_MODULE_7___default.a.Tween(rewardText).to({
         alpha: 0
       }, 300).start();
     }
@@ -2127,7 +2392,7 @@ function () {
   }, {
     key: "show",
     value: function show() {
-      //this._openBtnContainer.visible = true;
+      // this._openBtnContainer.visible = true;
       this.weapon.show();
       this._lockContainer.alpha = 0;
       this._unlockContainer.alpha = 1;
@@ -2158,19 +2423,19 @@ function () {
   }]);
 
   return Stage;
-}();
+}(_engine_Resizable__WEBPACK_IMPORTED_MODULE_13__["default"]);
 
 /* harmony default export */ __webpack_exports__["default"] = (Stage);
 
 /***/ }),
-/* 80 */
+/* 79 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return WeaponFactory; });
-/* harmony import */ var _Weapons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(81);
-/* harmony import */ var _Constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(83);
+/* harmony import */ var _Weapons__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(80);
+/* harmony import */ var _Constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(84);
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -2210,7 +2475,7 @@ function () {
 
 
 /***/ }),
-/* 81 */
+/* 80 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2225,10 +2490,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var component_emitter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(66);
 /* harmony import */ var component_emitter__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(component_emitter__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _engine_TexturesLoader__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(63);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(82);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(81);
 /* harmony import */ var _settings_appSettings__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(62);
-/* harmony import */ var pixi_particles__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(76);
-/* harmony import */ var _settings_particles__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(88);
+/* harmony import */ var pixi_particles__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(82);
+/* harmony import */ var _settings_particles__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(83);
 /* harmony import */ var _engine_Starter__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(7);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
@@ -2373,6 +2638,7 @@ function () {
       }
 
       this._weaponAnimationTime = 60;
+      console.log(1290);
     }
   }, {
     key: "stopRageModeAnimation",
@@ -2614,7 +2880,7 @@ function (_BaseWeapon2) {
 }(BaseWeapon);
 
 /***/ }),
-/* 82 */
+/* 81 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2651,7 +2917,59 @@ function () {
 
 
 /***/ }),
+/* 82 */,
 /* 83 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  alpha: {
+    start: 0,
+    end: 1
+  },
+  scale: {
+    start: 0.3,
+    end: 1.5,
+    minimumScaleMultiplier: 0.5
+  },
+  speed: {
+    start: 300,
+    end: 500,
+    minimumSpeedMultiplier: 2
+  },
+  acceleration: {
+    x: 0,
+    y: 0
+  },
+  maxSpeed: 3,
+  startRotation: {
+    min: -6,
+    max: 6
+  },
+  noRotation: true,
+  rotationSpeed: {
+    min: 0,
+    max: 20
+  },
+  lifetime: {
+    min: 1.8,
+    max: 2
+  },
+  blendMode: "normal",
+  frequency: 0.25,
+  emitterLifetime: -1,
+  maxParticles: 500,
+  pos: {
+    x: 0,
+    y: 0
+  },
+  addAtBack: false,
+  spawnType: "point"
+});
+
+/***/ }),
+/* 84 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2663,23 +2981,37 @@ var WEAPONS = {
 /* harmony default export */ __webpack_exports__["default"] = (WEAPONS);
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(69);
-/* harmony import */ var _Target__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(85);
+/* harmony import */ var _Target__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(86);
 /* harmony import */ var tween_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(65);
 /* harmony import */ var tween_js__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(tween_js__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(82);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(81);
 /* harmony import */ var component_emitter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(66);
 /* harmony import */ var component_emitter__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(component_emitter__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _engine_Resizable__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(73);
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -2689,20 +3021,26 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 var TargetsManager =
 /*#__PURE__*/
-function () {
+function (_Resizable) {
+  _inherits(TargetsManager, _Resizable);
+
   function TargetsManager(config) {
+    var _this;
+
     _classCallCheck(this, TargetsManager);
 
-    this._container = null;
-    this._target1 = null;
-    this._target2 = null;
-    this._config = config; //TODO: bonusManager, not stupid logic
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(TargetsManager).call(this));
+    _this._container = null;
+    _this._target1 = null;
+    _this._target2 = null;
+    _this._config = config; //TODO: bonusManager, not stupid logic
 
-    this._isFirstTarget = true;
+    _this._isFirstTarget = true;
 
-    this._init(config);
+    _this._init(config);
 
-    new component_emitter__WEBPACK_IMPORTED_MODULE_4___default.a(this);
+    new component_emitter__WEBPACK_IMPORTED_MODULE_4___default.a(_assertThisInitialized(_this));
+    return _this;
   }
 
   _createClass(TargetsManager, [{
@@ -2713,6 +3051,23 @@ function () {
         x: x
       });
       this.updateTargets();
+    }
+  }, {
+    key: "onResize",
+    value: function onResize(data) {
+      var w = data.w,
+          h = data.h; //landscape
+
+      if (w > h) {
+        this._container.x = w - 450;
+        this._container.x = w - 300;
+      } //portrait
+
+
+      if (h > w) {
+        this._container.x = w - 350;
+        this._container.x = w - 200;
+      }
     }
   }, {
     key: "makeHole",
@@ -2729,7 +3084,7 @@ function () {
   }, {
     key: "createTarget",
     value: function createTarget() {
-      var _this = this;
+      var _this2 = this;
 
       var level = this._config.level;
       var name = "target"; //TODO: refactoring
@@ -2746,15 +3101,15 @@ function () {
       });
       target.container.setParent(this._container);
       target.on("destroy", function () {
-        _this._target1 = null;
+        _this2._target1 = null;
 
-        _this.updateTargets();
+        _this2.updateTargets();
 
-        _this._container.removeChild(target.container); //TODO: refactoring
+        _this2._container.removeChild(target.container); //TODO: refactoring
 
 
         if (name === "flameTarget") {
-          _this.emit("rageMode");
+          _this2.emit("rageMode");
         }
       });
       return target;
@@ -2762,7 +3117,7 @@ function () {
   }, {
     key: "updateTargets",
     value: function updateTargets() {
-      var _this2 = this;
+      var _this3 = this;
 
       if (!this._target2) {
         this._target2 = this.createTarget();
@@ -2772,7 +3127,7 @@ function () {
       this._targetTween = new tween_js__WEBPACK_IMPORTED_MODULE_2___default.a.Tween(this._target1.container).to({
         x: 0
       }, 80).start().onComplete(function (x) {
-        _this2._target2 = _this2.createTarget();
+        _this3._target2 = _this3.createTarget();
       });
     }
   }, {
@@ -2802,12 +3157,12 @@ function () {
   }]);
 
   return TargetsManager;
-}();
+}(_engine_Resizable__WEBPACK_IMPORTED_MODULE_5__["default"]);
 
 /* harmony default export */ __webpack_exports__["default"] = (TargetsManager);
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2817,7 +3172,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var tween_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(tween_js__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var component_emitter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(66);
 /* harmony import */ var component_emitter__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(component_emitter__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(82);
+/* harmony import */ var _utils_utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(81);
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -2994,7 +3349,7 @@ function () {
 /* harmony default export */ __webpack_exports__["default"] = (Target);
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3002,7 +3357,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(69);
 /* harmony import */ var tween_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(65);
 /* harmony import */ var tween_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(tween_js__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _engine_Starter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -3012,7 +3366,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
 
 
 
@@ -3086,12 +3439,12 @@ function () {
 /* harmony default export */ __webpack_exports__["default"] = (Hint);
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _components_weapons_Constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(83);
+/* harmony import */ var _components_weapons_Constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(84);
 
 /* harmony default export */ __webpack_exports__["default"] = ([{
   name: "Colt 1911",
@@ -3121,72 +3474,7 @@ __webpack_require__.r(__webpack_exports__);
   level: "10",
   shotReward: 300,
   openLevelCost: 10000
-}, {
-  name: "no name",
-  weaponType: _components_weapons_Constants__WEBPACK_IMPORTED_MODULE_0__["default"].colt,
-  gameProgressToUnlock: 10,
-  level: "15",
-  shotReward: 500,
-  openLevelCost: 100000
-}, {
-  name: "no name",
-  weaponType: _components_weapons_Constants__WEBPACK_IMPORTED_MODULE_0__["default"].colt,
-  gameProgressToUnlock: 13,
-  level: "20",
-  shotReward: 1000,
-  openLevelCost: 1000000
 }]);
-
-/***/ }),
-/* 88 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ({
-  alpha: {
-    start: 0,
-    end: 1
-  },
-  scale: {
-    start: 0.3,
-    end: 1.5,
-    minimumScaleMultiplier: 0.5
-  },
-  speed: {
-    start: 300,
-    end: 500,
-    minimumSpeedMultiplier: 2
-  },
-  acceleration: {
-    x: 0,
-    y: 0
-  },
-  maxSpeed: 3,
-  startRotation: {
-    min: -6,
-    max: 6
-  },
-  noRotation: true,
-  rotationSpeed: {
-    min: 0,
-    max: 20
-  },
-  lifetime: {
-    min: 1.8,
-    max: 2
-  },
-  blendMode: "normal",
-  frequency: 0.25,
-  emitterLifetime: -1,
-  maxParticles: 500,
-  pos: {
-    x: 0,
-    y: 0
-  },
-  addAtBack: false,
-  spawnType: "point"
-});
 
 /***/ })
 /******/ ]);
