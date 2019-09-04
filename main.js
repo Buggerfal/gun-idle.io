@@ -396,9 +396,10 @@ __webpack_require__.r(__webpack_exports__);
     installButton: "0xf902ff",
     openStageButton: "0x4ccea8",
     substrateOutro: "0x696969",
-    stage1: "0x2d1c38",
-    stage2: "0x26152f",
-    scoreBar: "0x4c4c4c"
+    stage1: "0x050505",
+    stage2: "0x131313",
+    scoreBar: "0x4c4c4c",
+    particles: ["0xe23024", "0xe76d18", "0xe2aa0c"]
   }
 });
 
@@ -701,6 +702,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _settings_i18n__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(71);
 /* harmony import */ var _settings_polygonsPath__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(72);
 /* harmony import */ var _engine_Resizable__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(73);
+/* harmony import */ var pixi_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(8);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
@@ -722,6 +724,7 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 
 
 
@@ -767,7 +770,7 @@ function (_Resizable) {
         this._backgroundPolygon.width = w;
         this._moneyText.x = w / 2;
         this._moneyText.y = 100;
-        this._ctaDownload.container.x = w - this._ctaDownload.container.width - 50;
+        this._ctaDownload.container.x = pixi_js__WEBPACK_IMPORTED_MODULE_8__["utils"].isMobile ? w - 350 : 0;
       }
     }
   }, {
@@ -831,7 +834,7 @@ function (_Resizable) {
           w: w,
           h: h
         });
-      }, 100);
+      }, 500);
     }
   }, {
     key: "onLandscape",
@@ -1499,10 +1502,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _engine_Resizable__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(73);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -1556,91 +1555,94 @@ function (_Resizable) {
 
 
       if (h > w) {}
+
+      if (this._substrate) {
+        this._substrate.width = w;
+        this._substrate.height = h;
+        this._rect.x = w / 2 - this._rect.width / 2;
+        this._rect.y = h / 2 - 300;
+      }
     }
   }, {
     key: "init",
     value: function init() {
       var _this2 = this;
 
-      var _appSettings$app = _objectSpread({}, _settings_appSettings__WEBPACK_IMPORTED_MODULE_2__["default"].app),
-          width = _appSettings$app.width,
-          height = _appSettings$app.height;
-
+      var _window = window,
+          w = _window.innerWidth,
+          h = _window.innerHeight;
       this._container = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createContainer({});
 
       this._container.setParent(_engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.stage);
 
-      this._substrate = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawGraphics({
-        width: width,
-        height: height
+      this._substrate = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createColorContainer({
+        width: w,
+        height: h
       });
 
       this._substrate.setParent(this._container);
 
       this._substrate.alpha = 0.5;
-      var substrateWidth = 800;
       var _appSettings$colors = _settings_appSettings__WEBPACK_IMPORTED_MODULE_2__["default"].colors,
           substrateOutro = _appSettings$colors.substrateOutro,
           installButton = _appSettings$colors.installButton;
-      var rect = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawGraphics({
-        x: width / 2 - substrateWidth / 2,
-        y: 300,
-        width: substrateWidth,
-        height: 700,
-        color: substrateOutro,
-        rounded: 100
+      this._rect = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createColorContainer({
+        x: w / 2 - 300,
+        y: h / 2 - 300,
+        width: 600,
+        height: 600,
+        color: substrateOutro
       });
-      rect.setParent(this._container);
-      _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
-        x: width / 2,
-        y: 380,
+
+      this._rect.setParent(this._container);
+
+      var headerText = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
+        x: 300,
+        y: 100,
         text: _settings_i18n__WEBPACK_IMPORTED_MODULE_5__["default"].outroHeader,
         style: {
           fill: "white",
-          // fontFamily: "Courier New",
           fontSize: 70,
           fontWeight: 900
         }
-      }).setParent(this._container);
-      this._weaponContainer = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createContainer({
-        x: width / 2,
-        y: 550
       });
+      headerText.setParent(this._rect);
+      this._weaponContainer = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createContainer({});
 
-      this._weaponContainer.setParent(this._container);
+      this._weaponContainer.setParent(this._rect);
 
       var shotGun = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createSpriteFromAtlas({
-        x: 0,
-        y: 0,
+        x: 300,
+        y: 250,
         anchor: 0.5,
         name: "shotgun"
       });
       shotGun.setParent(this._weaponContainer);
       var shotGunRefresh = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createSpriteFromAtlas({
-        x: 150,
-        y: 0,
+        x: 450,
+        y: 250,
         anchor: 0.5,
         name: "shotgunRefresh"
       });
       shotGunRefresh.setParent(this._weaponContainer);
       var shotGunSlide = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createSpriteFromAtlas({
-        x: -8,
-        y: -32,
+        x: 290,
+        y: 215,
         anchor: 0.5,
         name: "shotgunSlide"
       });
       shotGunSlide.setParent(this._weaponContainer);
-      _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
-        x: width / 2,
-        y: 940,
+      var description = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
+        x: 300,
+        y: 530,
         text: _settings_i18n__WEBPACK_IMPORTED_MODULE_5__["default"].outroDescription,
         style: {
           fill: "white",
-          // fontFamily: "Courier New",
-          fontSize: 50,
+          fontSize: 45,
           fontWeight: 900
         }
-      }).setParent(this._container);
+      });
+      description.setParent(this._rect);
       this._ctaDownload = new _components_Button__WEBPACK_IMPORTED_MODULE_4__["default"]({
         width: 350,
         height: 150,
@@ -1652,9 +1654,11 @@ function (_Resizable) {
         },
         fontSize: 70
       });
-      var ctaContainer = this._ctaDownload.container;
-      ctaContainer.position.set(width / 2 - 175, 700);
-      ctaContainer.setParent(this._container);
+
+      this._ctaDownload.container.setParent(this._rect);
+
+      this._ctaDownload.container.position.set(130, 350);
+
       this.hide();
     }
   }, {
@@ -2608,9 +2612,11 @@ function () {
     value: function runRageModeAnimation() {
       var _this2 = this;
 
+      var particleColors = _settings_appSettings__WEBPACK_IMPORTED_MODULE_6__["default"].colors.particles;
+
       var _loop = function _loop(i) {
-        var color = _utils_utils__WEBPACK_IMPORTED_MODULE_5__["default"].getRandomColor();
         var container = new pixi_js__WEBPACK_IMPORTED_MODULE_2__["ParticleContainer"]();
+        console.log(particleColors[i - 1]);
 
         _this2._container.addChild(container);
 
@@ -2618,7 +2624,7 @@ function () {
         container.y = _this2._slideSprite.y + 170;
         var graphics = new pixi_js__WEBPACK_IMPORTED_MODULE_2__["Graphics"]();
         graphics.lineStyle(0);
-        graphics.beginFill(color, 1);
+        graphics.beginFill(particleColors[i - 1], 1);
         graphics.drawCircle(100, 250, 50);
         graphics.endFill();
         var texture = _engine_Starter__WEBPACK_IMPORTED_MODULE_9__["default"].app.renderer.generateTexture(graphics);
@@ -2626,14 +2632,17 @@ function () {
         var ticker = new pixi_js__WEBPACK_IMPORTED_MODULE_2__["Ticker"]();
         ticker.start();
         ticker.add(function () {
+          emitter.spawnPos.x = _this2._weaponContainer.width;
+          emitter.spawnPos.y = 30;
           emitter.update(ticker.deltaMS * 0.003);
         });
         emitter.emit = true;
+        console.log(emitter);
 
         _this2._rageEmitters.push(emitter);
       };
 
-      for (var i = 0; i < 4; i++) {
+      for (var i = 1; i < 4; i++) {
         _loop(i);
       }
 
