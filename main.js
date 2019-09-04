@@ -251,8 +251,7 @@ function () {
         height: height,
         transparent: true,
         view: view
-      }); // this.app.renderer.autoResize = true;
-
+      });
       container.appendChild(this.app.view);
       this._ticker = new pixi_js__WEBPACK_IMPORTED_MODULE_0__["Ticker"]();
 
@@ -276,7 +275,6 @@ function () {
   }, {
     key: "resize",
     value: function resize() {
-      console.log("STARTER");
       var _this$size = this.size,
           width = _this$size.width,
           height = _this$size.height;
@@ -759,18 +757,15 @@ function (_Resizable) {
     value: function onResize(data) {
       var w = data.w,
           h = data.h;
-
-      if (w > h) {//landscape
-      }
-
-      if (w < h) {//portrait
-      }
+      var isLandscape = w > h;
+      var btnX = isLandscape ? w - 350 : w - 310;
 
       if (this._backgroundPolygon) {
         this._backgroundPolygon.width = w;
         this._moneyText.x = w / 2;
         this._moneyText.y = 100;
-        this._ctaDownload.container.x = pixi_js__WEBPACK_IMPORTED_MODULE_8__["utils"].isMobile ? w - 350 : 0;
+
+        this._ctaDownload.container.position.set(btnX, 25);
       }
     }
   }, {
@@ -783,8 +778,9 @@ function (_Resizable) {
           height = _this$_config.height;
       var scoreBar = _settings_appSettings__WEBPACK_IMPORTED_MODULE_2__["default"].colors.scoreBar;
       var _window = window,
-          w = _window.innerWidth;
-      var h = _settings_appSettings__WEBPACK_IMPORTED_MODULE_2__["default"].score.height;
+          w = _window.innerWidth,
+          h = _window.innerHeight;
+      var scoreHeight = _settings_appSettings__WEBPACK_IMPORTED_MODULE_2__["default"].score.height;
       this._container = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createContainer({});
 
       this._container.setParent(_engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.stage);
@@ -801,7 +797,7 @@ function (_Resizable) {
         y: height / 2,
         style: {
           fill: "white",
-          fontSize: 130
+          fontSize: 90
         }
       });
 
@@ -821,7 +817,7 @@ function (_Resizable) {
         fontSize: 70
       });
 
-      this._ctaDownload.container.position.set(width - 350, 50);
+      this._ctaDownload.container.position.set(w - 290, 50);
 
       this._ctaDownload.container.setParent(this._container);
 
@@ -832,9 +828,9 @@ function (_Resizable) {
       setTimeout(function () {
         _this2.onResize({
           w: w,
-          h: h
+          h: scoreHeight
         });
-      }, 500);
+      }, 100);
     }
   }, {
     key: "onLandscape",
@@ -1560,7 +1556,7 @@ function (_Resizable) {
         this._substrate.width = w;
         this._substrate.height = h;
         this._rect.x = w / 2 - this._rect.width / 2;
-        this._rect.y = h / 2 - 300;
+        this._rect.y = h / 2 - 350;
       }
     }
   }, {
@@ -1587,9 +1583,9 @@ function (_Resizable) {
           substrateOutro = _appSettings$colors.substrateOutro,
           installButton = _appSettings$colors.installButton;
       this._rect = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createColorContainer({
-        x: w / 2 - 300,
-        y: h / 2 - 300,
-        width: 600,
+        x: w / 2 - 350,
+        y: h / 2 - 350,
+        width: 700,
         height: 600,
         color: substrateOutro
       });
@@ -1597,7 +1593,7 @@ function (_Resizable) {
       this._rect.setParent(this._container);
 
       var headerText = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
-        x: 300,
+        x: 350,
         y: 100,
         text: _settings_i18n__WEBPACK_IMPORTED_MODULE_5__["default"].outroHeader,
         style: {
@@ -1612,7 +1608,7 @@ function (_Resizable) {
       this._weaponContainer.setParent(this._rect);
 
       var shotGun = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createSpriteFromAtlas({
-        x: 300,
+        x: 350,
         y: 250,
         anchor: 0.5,
         name: "shotgun"
@@ -1633,7 +1629,7 @@ function (_Resizable) {
       });
       shotGunSlide.setParent(this._weaponContainer);
       var description = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
-        x: 300,
+        x: 350,
         y: 530,
         text: _settings_i18n__WEBPACK_IMPORTED_MODULE_5__["default"].outroDescription,
         style: {
@@ -1657,7 +1653,7 @@ function (_Resizable) {
 
       this._ctaDownload.container.setParent(this._rect);
 
-      this._ctaDownload.container.position.set(130, 350);
+      this._ctaDownload.container.position.set(170, 350);
 
       this.hide();
     }
@@ -1911,7 +1907,7 @@ function (_Resizable) {
       ticker.start(); //RED BACKGROUND ANIMATION
 
       new tween_js__WEBPACK_IMPORTED_MODULE_5___default.a.Tween(this._rageModeBackground).to({
-        alpha: [0.3, 0.1, 0.4, 0.1, 0.5, 0.2, 0.1, 0.4, 0]
+        alpha: [0.5, 0.1, 0.7, 0.1, 0.5, 0.7, 0.3, 0.4, 0]
       }, timeToOffRageMode).onComplete(function () {
         _engine_Starter__WEBPACK_IMPORTED_MODULE_7__["default"].app.stage.removeChild(_this4._rageModeBackground);
 
@@ -1941,8 +1937,8 @@ function (_Resizable) {
     key: "_shakeBackground",
     value: function _shakeBackground() {
       new tween_js__WEBPACK_IMPORTED_MODULE_5___default.a.Tween(_engine_Starter__WEBPACK_IMPORTED_MODULE_7__["default"].app.stage).to({
-        x: [-5, 0, 8, -9, 0, 6, 0, -8, 0, 7],
-        y: [0, 4, 0, 6, -7, 3, -5, 0, 6, 0, 9, 0]
+        x: [-7, 0, 9, -4, 8, -9, 0, 7, -3, -8, 0, 7, 0],
+        y: [0, 7, 0, 0, -7, 3, -5, 0, 6, 0, -7, 0, 8, 0]
       }, 480).repeat(10).start();
     }
   }, {
@@ -2616,7 +2612,6 @@ function () {
 
       var _loop = function _loop(i) {
         var container = new pixi_js__WEBPACK_IMPORTED_MODULE_2__["ParticleContainer"]();
-        console.log(particleColors[i - 1]);
 
         _this2._container.addChild(container);
 
@@ -2637,7 +2632,6 @@ function () {
           emitter.update(ticker.deltaMS * 0.003);
         });
         emitter.emit = true;
-        console.log(emitter);
 
         _this2._rageEmitters.push(emitter);
       };
@@ -2647,7 +2641,6 @@ function () {
       }
 
       this._weaponAnimationTime = 60;
-      console.log(1290);
     }
   }, {
     key: "stopRageModeAnimation",
@@ -2966,7 +2959,7 @@ __webpack_require__.r(__webpack_exports__);
     max: 2
   },
   blendMode: "normal",
-  frequency: 0.25,
+  frequency: 0.1,
   emitterLifetime: -1,
   maxParticles: 500,
   pos: {
