@@ -3,17 +3,15 @@
 <head>
   <meta charset="utf-8">
   <style>
-    body{
+    body {
       padding: 0;
       margin: 0;
-      width: 100%;
-      height: 100%;
       overflow: hidden;
     }
   </style>
 <body>
-<script>
-  (window["webpackJsonp"] = window["webpackJsonp"] || []).push([[1],[
+  <script>
+    (window["webpackJsonp"] = window["webpackJsonp"] || []).push([[1],[
 /* 0 */,
 /* 1 */,
 /* 2 */,
@@ -48310,8 +48308,7 @@ function () {
         w: gw,
         h: gh,
         isLandscape: isLandscape
-      });
-      console.log("RESIZE CALL", gw, gh, isLandscape); // if (currH > currW) {
+      }); // if (currH > currW) {
       //     //portrait
       //     newW = currW;
       //     newH = newW * (currH / currW);
@@ -49036,7 +49033,7 @@ function () {
         y: height / 2,
         text: text,
         style: {
-          fill: "white",
+          fill: 'white',
           // fontFamily: "Comic Sans MS",
           fontSize: fontSize
         }
@@ -49111,9 +49108,9 @@ function () {
       // const orientation =
       //     data.w > data.h
       //         ? Resizable.orientation.LANDSCAPE
-      //         : Resizable.orientation.PORTRAIT;
+      //         : Resizable.orientation.PORTRAIT
       _this.onResize(data);
-    }); //this.onResize();
+    }); // this.onResize()
   }
 
   _createClass(Resizable, [{
@@ -49125,7 +49122,7 @@ function () {
 }(); // Resizable.orientation = {
 //     LANDSCAPE: "l",
 //     PORTRAIT: "2",
-// };
+// }
 
 
 /* harmony default export */ __webpack_exports__["default"] = (Resizable);
@@ -49800,7 +49797,7 @@ function (_Resizable) {
 
         this._addEventListener(this._activeStage);
       }
-    } //TODO: refactoring, move logic
+    } // TODO: refactoring, move logic
 
   }, {
     key: "_runRageMode",
@@ -49809,7 +49806,7 @@ function (_Resizable) {
 
       this._openStages.forEach(function (stage) {
         stage.weapon.runRageModeAnimation();
-      }); //AUTOSHOT (RAGE-MODE) LOGIC
+      }); // AUTOSHOT (RAGE-MODE) LOGIC
 
 
       var timeToOffRageMode = 5000;
@@ -49830,7 +49827,7 @@ function (_Resizable) {
           ticker.stop();
         }
       });
-      ticker.start(); //RED BACKGROUND ANIMATION
+      ticker.start(); // RED BACKGROUND ANIMATION
 
       new tween_js__WEBPACK_IMPORTED_MODULE_5___default.a.Tween(this._rageModeBackground).to({
         alpha: [0.5, 0.1, 0.7, 0.1, 0.5, 0.7, 0.3, 0.4, 0]
@@ -49857,7 +49854,7 @@ function (_Resizable) {
       }).start();
 
       this._shakeBackground();
-    } //TODO: refactoring, move logic
+    } // TODO: refactoring, move logic
 
   }, {
     key: "_shakeBackground",
@@ -50033,6 +50030,12 @@ function (_Resizable) {
         this._openBtnContainer.x = w / 2 - 125; //half button width
 
         this._openBtnContainer.y = isLandScape ? 100 : 150;
+        this._openButton.container.x = _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.screen.width / 2 - 125;
+        this._openButton.container.y = _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.screen.height - this._mainContainer.height * 2 + this._mainContainer.height / 2 - 40;
+        var x = _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.screen.width / 2;
+        var y = _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.screen.height - this._mainContainer.height * 2 + this._mainContainer.height / 2 - 20;
+        this._hintBtn.sprite.x = x;
+        this._hintBtn.sprite.y = y;
       }
 
       if (this._hint) {
@@ -50042,18 +50045,6 @@ function (_Resizable) {
       }
 
       this._unlockContainer.y = this._mainContainer.y;
-
-      if (this.rect) {
-        this._unlockContainer.removeChild(this.rect);
-      }
-
-      this.rect = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawRect({
-        x: this._unlockContainer.x,
-        y: this._unlockContainer.y,
-        width: this._unlockContainer.width,
-        height: this._unlockContainer.height
-      });
-      this.rect.setParent(this._lockContainer);
       this._lockContainer.y = this._mainContainer.y;
       this._lock.x = w / 2 - 120;
       this._levelInfoText.x = this._lock.x + this._lock.width + 100;
@@ -50165,7 +50156,6 @@ function (_Resizable) {
       this._openButton = new _Button__WEBPACK_IMPORTED_MODULE_11__["default"]({
         width: 250,
         height: 85,
-        offset: 30,
         rounded: 15,
         color: openStageButton,
         text: "".concat(_settings_i18n__WEBPACK_IMPORTED_MODULE_12__["default"].usdIcon).concat(openLevelCost),
@@ -50180,11 +50170,14 @@ function (_Resizable) {
           _this3.show();
 
           _ScoreBar__WEBPACK_IMPORTED_MODULE_4__["default"].update(-openLevelCost);
+          _this3._hintBtn.sprite.visible = false;
         },
         fontSize: 50
       });
+      this._openButton.container.x = _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.screen.width / 2 - 125;
+      this._openButton.container.y = _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.screen.height - this._mainContainer.height * 2 + this._mainContainer.height / 2 - 40;
 
-      this._openButton.container.setParent(this._openBtnContainer);
+      this._openButton.container.setParent(_engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.stage);
 
       this._openBtnContainer.visible = false;
       this._lockBtnIcon = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].createSprite({
@@ -50303,22 +50296,22 @@ function (_Resizable) {
   }, {
     key: "_drawRewardText",
     value: function _drawRewardText(value) {
-      var y = _utils_utils__WEBPACK_IMPORTED_MODULE_6__["default"].random(100, 240);
+      var y = _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.screen.height - this._mainContainer.height * this.level + _utils_utils__WEBPACK_IMPORTED_MODULE_6__["default"].random(100, 240);
       var sign = _utils_utils__WEBPACK_IMPORTED_MODULE_6__["default"].random(0, 1) === 0 ? -1 : 1;
       var _window4 = window,
           currW = _window4.innerWidth,
           currH = _window4.innerHeight;
-      var offset = 100;
+      var offset = _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.screen.height > _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.screen.width ? 0.7 : 0.8;
       var rewardText = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
         text: "".concat(_settings_i18n__WEBPACK_IMPORTED_MODULE_12__["default"].usdIcon).concat(value),
-        x: window.innerWidth - offset,
+        x: _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.screen.width * offset,
         y: y,
         style: {
           fill: "white",
           fontSize: 50
         }
       });
-      rewardText.setParent(this._unlockContainer);
+      rewardText.setParent(_engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.stage);
       rewardText.rotation = Math.random() * sign;
       new tween_js__WEBPACK_IMPORTED_MODULE_7___default.a.Tween(rewardText).to({
         alpha: 0
@@ -50348,14 +50341,18 @@ function (_Resizable) {
 
       this._drawOpenLevelButton();
 
+      this._lockBtnIcon.alpha = 0;
       this._lock.alpha = 0;
       this._levelInfoText.alpha = 0;
       this._openBtnContainer.visible = true;
-      var hint = new _Hint__WEBPACK_IMPORTED_MODULE_10__["default"]({
-        x: 60,
-        y: 70
+      var x = _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.screen.width / 2;
+      var y = _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.screen.height - this._mainContainer.height * 2 + this._mainContainer.height / 2 - 20;
+      this._hintBtn = new _Hint__WEBPACK_IMPORTED_MODULE_10__["default"]({
+        x: x,
+        y: y
       });
-      hint.sprite.setParent(this._openBtnContainer);
+
+      this._hintBtn.sprite.setParent(_engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.stage);
     }
   }, {
     key: "configuration",
@@ -50367,7 +50364,8 @@ function (_Resizable) {
   return Stage;
 }(_engine_Resizable__WEBPACK_IMPORTED_MODULE_13__["default"]);
 
-/* harmony default export */ __webpack_exports__["default"] = (Stage);
+/* harmony default export */ __webpack_exports__["default"] = (Stage); //Хуячу ифф в инит кнопки и текстов, их в стартер.
+//В иффе типа если портретка от рисую как есть, а если нет то х2
 
 /***/ }),
 /* 77 */
@@ -51425,6 +51423,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ })
 /******/ ]);
-</script>
+  </script>
 </body>
 </html>
