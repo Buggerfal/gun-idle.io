@@ -10,8 +10,8 @@
     }
   </style>
 <body>
-  <script>
-    (window["webpackJsonp"] = window["webpackJsonp"] || []).push([[1],[
+    <script>
+        (window["webpackJsonp"] = window["webpackJsonp"] || []).push([[1],[
 /* 0 */,
 /* 1 */,
 /* 2 */,
@@ -48150,7 +48150,7 @@ const IMAGES = {
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(1);
+    __webpack_require__(1);
 module.exports = __webpack_require__(2);
 
 
@@ -50296,7 +50296,11 @@ function (_Resizable) {
   }, {
     key: "_drawRewardText",
     value: function _drawRewardText(value) {
-      var y = _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.screen.height - this._mainContainer.height * this.level + _utils_utils__WEBPACK_IMPORTED_MODULE_6__["default"].random(100, 240);
+      // const y =
+      //     starter.app.screen.height -
+      //     this._mainContainer.height * this.level +
+      //     Utils.random(100, 240);
+      var y = _utils_utils__WEBPACK_IMPORTED_MODULE_6__["default"].random(100, 240);
       var sign = _utils_utils__WEBPACK_IMPORTED_MODULE_6__["default"].random(0, 1) === 0 ? -1 : 1;
       var _window4 = window,
           currW = _window4.innerWidth,
@@ -50304,14 +50308,14 @@ function (_Resizable) {
       var offset = _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.screen.height > _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.screen.width ? 0.7 : 0.8;
       var rewardText = _utils_GraphicsHelper__WEBPACK_IMPORTED_MODULE_1__["default"].drawText({
         text: "".concat(_settings_i18n__WEBPACK_IMPORTED_MODULE_12__["default"].usdIcon).concat(value),
-        x: _engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.screen.width * offset,
+        x: -70,
         y: y,
         style: {
           fill: "white",
           fontSize: 50
         }
       });
-      rewardText.setParent(_engine_Starter__WEBPACK_IMPORTED_MODULE_0__["default"].app.stage);
+      rewardText.setParent(this.targetsManager.container);
       rewardText.rotation = Math.random() * sign;
       new tween_js__WEBPACK_IMPORTED_MODULE_7___default.a.Tween(rewardText).to({
         alpha: 0
@@ -51423,6 +51427,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ })
 /******/ ]);
-  </script>
+    </script>
 </body>
 </html>
